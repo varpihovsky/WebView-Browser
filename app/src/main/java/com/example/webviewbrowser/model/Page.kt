@@ -31,6 +31,6 @@ class Page(var path: String?) : Parcelable {
     }
 }
 
-@SuppressLint("AppCompatCustomView")
+
 class PageButton(context: Context, val pageFragment: PageFragment) :
-        Button(context)
+        androidx.appcompat.widget.AppCompatButton(context)

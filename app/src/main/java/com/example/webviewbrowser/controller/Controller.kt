@@ -15,12 +15,10 @@ object Controller {
     lateinit var fragmentManager: Pair<FragmentManager, Int>
 
     val createNewPageListener: (View?) -> Unit = {
-        println("Web view added")
         fragmentManager.first.createNewPage()
     }
 
     val deleteCurrentPageListener: (View?) -> Unit = {
-        println("Web view removed")
         fragmentManager.first.removeCurrentPage()
         deleteCurrentPage()
         fragmentManager.first.showCurrentPage()

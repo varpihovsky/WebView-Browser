@@ -56,7 +56,6 @@ class PageFragment : Fragment() {
 
         private const val DEFAULT_PATH = "https://www.google.com/"
 
-        @JvmStatic
         fun newInstance(page: Page? = null) =
             PageFragment().apply {
                 arguments = Bundle().apply {
