@@ -1,11 +1,8 @@
 package com.example.webviewbrowser.controller
 
 import android.view.View
-import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.add
 import androidx.fragment.app.commit
-import com.example.webviewbrowser.R
 import com.example.webviewbrowser.view.fragment.PageFragment
 
 object Controller {
@@ -25,7 +22,7 @@ object Controller {
     }
 
     private fun createNewPage(): PageFragment? {
-        pagesList.add(PageFragment())
+        pagesList.add(PageFragment.newInstance())
         currentPage = pagesList.last()
         ButtonController.addButton(currentPage!!)
         return currentPage

@@ -1,12 +1,12 @@
 package com.example.webviewbrowser.view.fragment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.fragment.app.Fragment
 import com.example.webviewbrowser.R
 import com.example.webviewbrowser.controller.ButtonController
 import com.example.webviewbrowser.model.Page
@@ -15,7 +15,7 @@ private const val PATH_PARAM = "page"
 
 const val DEFAULT_PATH = "https://www.google.com/"
 
-class PageFragment(path: String? = null) : Fragment() {
+class PageFragment private constructor(path: String? = null) : Fragment() {
     var page: Page = Page(path ?: DEFAULT_PATH)
     private lateinit var webView: WebView
 
@@ -49,14 +49,18 @@ class PageFragment(path: String? = null) : Fragment() {
     }
 
     private fun load(){
-        webView.loadUrl(page.path!!)
+        webView.loadUrl(page.path)
         webView.reload()
     }
 
-    private inner class WebViewWebClient : WebViewClient(){
+    private inner class WebViewWebClient : WebViewClient() {
         override fun onPageFinished(view: WebView?, url: String?) {
-            page.path = url
+            page.path = url ?: ""
             ButtonController.changeTextOfButton(this@PageFragment)
         }
+    }
+
+    companion object {
+        fun newInstance(path: String? = null) = PageFragment(path)
     }
 }
