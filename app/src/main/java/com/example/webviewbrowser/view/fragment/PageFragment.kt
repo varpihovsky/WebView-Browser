@@ -8,18 +8,21 @@ import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.example.webviewbrowser.R
+import com.example.webviewbrowser.controller.ButtonController
 import com.example.webviewbrowser.model.Page
 
 private const val PATH_PARAM = "page"
 
-class PageFragment : Fragment() {
-    var page: Page? = null
+const val DEFAULT_PATH = "https://www.google.com/"
+
+class PageFragment(path: String? = null) : Fragment() {
+    var page: Page = Page(path ?: DEFAULT_PATH)
     private lateinit var webView: WebView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            page = it.get(PATH_PARAM) as Page?
+            page = it.get(PATH_PARAM) as Page
         }
     }
 
@@ -36,31 +39,24 @@ class PageFragment : Fragment() {
         webView = view.findViewById(R.id.page)
 
         webView.settings.javaScriptEnabled = true
-        webView.webViewClient = WebViewClient()
+        webView.webViewClient = WebViewWebClient()
 
-        if(page != null) {
-            load()
-        }
+        load()
     }
 
     fun refresh(){
         webView.reload()
     }
 
-    fun load(){
-        webView.loadUrl(page!!.path!!)
+    private fun load(){
+        webView.loadUrl(page.path!!)
         webView.reload()
     }
 
-    companion object {
-
-        private const val DEFAULT_PATH = "https://www.google.com/"
-
-        fun newInstance(page: Page? = null) =
-            PageFragment().apply {
-                arguments = Bundle().apply {
-                    putParcelable(PATH_PARAM, page ?: Page(DEFAULT_PATH))
-                }
-            }
+    private inner class WebViewWebClient : WebViewClient(){
+        override fun onPageFinished(view: WebView?, url: String?) {
+            page.path = url
+            ButtonController.changeTextOfButton(this@PageFragment)
+        }
     }
 }

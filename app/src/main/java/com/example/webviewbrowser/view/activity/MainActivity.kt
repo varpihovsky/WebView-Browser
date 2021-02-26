@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
         Controller.fragmentManager = supportFragmentManager to R.id.browserFragment
 
         ButtonController.linearLayout = findViewById(R.id.buttonsLayout)
-        ButtonController.context = applicationContext
+        ButtonController.context = this
     }
 
 }

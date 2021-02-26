@@ -25,7 +25,7 @@ object Controller {
     }
 
     private fun createNewPage(): PageFragment? {
-        pagesList.add(PageFragment.newInstance())
+        pagesList.add(PageFragment())
         currentPage = pagesList.last()
         ButtonController.addButton(currentPage!!)
         return currentPage

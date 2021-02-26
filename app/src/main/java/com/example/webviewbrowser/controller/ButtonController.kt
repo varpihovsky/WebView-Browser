@@ -17,16 +17,24 @@ object ButtonController {
 
     fun addButton(pageFragment: PageFragment) {
         val button = PageButton(context, pageFragment)
-        button.text = pageFragment.page?.path
+        button.text = pageFragment.page.path
         button.setOnClickListener(listener)
         buttons.add(button)
         linearLayout.addView(button)
     }
 
     fun removeButton(pageFragment: PageFragment) {
-        val button = buttons.find { it.pageFragment == pageFragment }
+        val button = findButton(pageFragment)
         buttons.remove(button)
         linearLayout.removeView(button)
     }
+
+    fun changeTextOfButton(pageFragment: PageFragment) {
+        val button = findButton(pageFragment)
+        button?.text = pageFragment.page.path
+    }
+
+    private fun findButton(pageFragment: PageFragment) =
+        buttons.find { it.pageFragment == pageFragment }
 }
 
