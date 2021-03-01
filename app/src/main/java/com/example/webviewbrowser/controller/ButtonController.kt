@@ -7,31 +7,34 @@ import com.example.webviewbrowser.model.PageButton
 import com.example.webviewbrowser.view.fragment.PageFragment
 
 object ButtonController {
-    private val buttons = mutableListOf<PageButton>()
     lateinit var linearLayout: LinearLayout
     lateinit var context: Context
 
+    private val buttons = mutableListOf<PageButton>()
     private val listener: (View?) -> Unit = {
-        Controller.selectPage((it as PageButton).pageFragment)
+        PageController.selectPage((it as PageButton).pageFragment)
     }
 
     fun addButton(pageFragment: PageFragment) {
-        val button = PageButton(context, pageFragment)
-        button.text = pageFragment.page.path
-        button.setOnClickListener(listener)
-        buttons.add(button)
-        linearLayout.addView(button)
+        PageButton(context, pageFragment).apply {
+            text = pageFragment.page.path
+            setOnClickListener(listener)
+            buttons.add(this)
+            linearLayout.addView(this)
+        }
     }
 
     fun removeButton(pageFragment: PageFragment) {
-        val button = findButton(pageFragment)
-        buttons.remove(button)
-        linearLayout.removeView(button)
+        findButton(pageFragment).let {
+            buttons.remove(it)
+            linearLayout.removeView(it)
+        }
     }
 
     fun changeTextOfButton(pageFragment: PageFragment) {
-        val button = findButton(pageFragment)
-        button?.text = pageFragment.page.path
+        findButton(pageFragment)?.apply {
+            text = pageFragment.page.path
+        }
     }
 
     private fun findButton(pageFragment: PageFragment) =

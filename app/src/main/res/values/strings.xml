@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Web View Browser</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="new_page">New Page</string>
+    <string name="remove_current_page">Remove Current Page</string>
 </resources>

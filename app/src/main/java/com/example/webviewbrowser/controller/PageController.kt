@@ -3,13 +3,17 @@ package com.example.webviewbrowser.controller
 import android.view.View
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
+import androidx.lifecycle.Lifecycle
 import com.example.webviewbrowser.view.fragment.PageFragment
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-object Controller {
+object PageController {
+    lateinit var fragmentManager: Pair<FragmentManager, Int>
+
     private val pagesList = mutableListOf<PageFragment>()
     private var currentPage: PageFragment? = null
-
-    lateinit var fragmentManager: Pair<FragmentManager, Int>
 
     val createNewPageListener: (View?) -> Unit = {
         fragmentManager.first.createNewPage()
@@ -21,26 +25,26 @@ object Controller {
         fragmentManager.first.showCurrentPage()
     }
 
-    private fun createNewPage(): PageFragment? {
-        pagesList.add(PageFragment.newInstance())
-        currentPage = pagesList.last()
-        ButtonController.addButton(currentPage!!)
-        return currentPage
-    }
-
-    private fun deleteCurrentPage() {
-        pagesList.remove(currentPage)
-        if (currentPage != null) {
-            ButtonController.removeButton(currentPage!!)
+    private fun createNewPage(): PageFragment =
+        PageFragment.newInstance().let {
+            pagesList.add(it)
+            currentPage = pagesList.last()
+            return@let it
         }
-        currentPage = pagesList.lastOrNull()
-    }
+
+
+    private fun deleteCurrentPage() =
+        currentPage?.let {
+            pagesList.remove(it)
+            ButtonController.removeButton(it)
+            currentPage = pagesList.lastOrNull()
+        }
 
     private fun refreshCurrentPage() {
         currentPage?.refresh()
     }
 
-    fun selectPage(pageFragment: PageFragment){
+    fun selectPage(pageFragment: PageFragment) {
         if (pageFragment == currentPage) {
             refreshCurrentPage()
         } else {
@@ -51,24 +55,35 @@ object Controller {
         }
     }
 
-    private fun FragmentManager.createNewPage() =
+    private fun FragmentManager.createNewPage() {
         this.commit {
             setReorderingAllowed(true)
-            add(fragmentManager.second, Controller.createNewPage()!!)
-            show(currentPage!!)
+            PageController.createNewPage().let {
+                add(fragmentManager.second, it)
+                show(it)
+            }
         }
+        MainScope().launch {
+            currentPage?.let {
+                while (it.lifecycle.currentState == Lifecycle.State.INITIALIZED) {
+                    delay(100)
+                }
+                ButtonController.addButton(it)
+            }
+        }
+    }
 
     private fun FragmentManager.removeCurrentPage() =
         this.commit {
             setReorderingAllowed(true)
-            currentPage?.let { remove(it) }
+            currentPage?.let { ::remove }
         }
 
     private fun FragmentManager.showCurrentPage() = currentPage?.let {
-                this.commit {
-                    show(it)
-                }
-            }
+        this.commit {
+            show(it)
+        }
+    }
 
     private fun FragmentManager.hideCurrentPage() = currentPage?.let {
         this.commit { hide(it) }

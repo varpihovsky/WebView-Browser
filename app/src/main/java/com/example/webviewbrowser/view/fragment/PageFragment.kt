@@ -1,5 +1,6 @@
 package com.example.webviewbrowser.view.fragment
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,18 +12,15 @@ import com.example.webviewbrowser.R
 import com.example.webviewbrowser.controller.ButtonController
 import com.example.webviewbrowser.model.Page
 
-private const val PATH_PARAM = "page"
-
-const val DEFAULT_PATH = "https://www.google.com/"
-
-class PageFragment private constructor(path: String? = null) : Fragment() {
-    var page: Page = Page(path ?: DEFAULT_PATH)
+class PageFragment : Fragment() {
+    lateinit var page: Page
     private lateinit var webView: WebView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             page = it.get(PATH_PARAM) as Page
+            it
         }
     }
 
@@ -33,6 +31,7 @@ class PageFragment private constructor(path: String? = null) : Fragment() {
         return inflater.inflate(R.layout.fragment_browser, container, false)
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -50,7 +49,6 @@ class PageFragment private constructor(path: String? = null) : Fragment() {
 
     private fun load(){
         webView.loadUrl(page.path)
-        webView.reload()
     }
 
     private inner class WebViewWebClient : WebViewClient() {
@@ -61,6 +59,14 @@ class PageFragment private constructor(path: String? = null) : Fragment() {
     }
 
     companion object {
-        fun newInstance(path: String? = null) = PageFragment(path)
+        private const val DEFAULT_PATH = "https://www.google.com/"
+
+        private const val PATH_PARAM = "page"
+
+        fun newInstance(path: String? = null) = PageFragment().apply {
+            arguments = Bundle().apply {
+                putParcelable(PATH_PARAM, Page(path ?: DEFAULT_PATH))
+            }
+        }
     }
 }

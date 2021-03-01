@@ -1,42 +1,51 @@
 package com.example.webviewbrowser.controller
 
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.commit
+import androidx.lifecycle.Lifecycle
 import com.example.webviewbrowser.view.fragment.PageFragment
-import io.mockk.*
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkObject
+import io.mockk.verify
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.setMain
 import org.junit.Before
 import org.junit.Test
 
-class ControllerTest {
-    val fragmentManagerMock: FragmentManager = mockk(relaxed = true)
+class PageControllerTest {
+    private val fragmentManagerMock: FragmentManager = mockk(relaxed = true)
 
+    @ExperimentalCoroutinesApi
     @Before
     fun setUp() {
-        Controller.fragmentManager = Pair(fragmentManagerMock, 0)
+        PageController.fragmentManager = Pair(fragmentManagerMock, 0)
 
         mockkObject(ButtonController)
 
         mockkObject(PageFragment)
-        every { PageFragment.newInstance() } returns mockk(relaxed = true) andThenAnswer {
-            mockk(
-                relaxed = true
-            )
+        every { PageFragment.newInstance() } answers {
+            mockk<PageFragment>(relaxed = true).apply {
+                every { this@apply.lifecycle.currentState } returns Lifecycle.State.CREATED
+            }
         }
 
         every { ButtonController.addButton(any()) } returns Unit
         every { ButtonController.removeButton(any()) } returns Unit
+
+        Dispatchers.setMain(Dispatchers.Default)
     }
 
     @Test
     fun `Create new page listener should create new button in ButtonController`() {
-        Controller.createNewPageListener.invoke(null)
+        PageController.createNewPageListener.invoke(null)
         verify(exactly = 1) { ButtonController.addButton(any()) }
     }
 
     @Test
     fun `Delete current page listener should remove button in ButtonController`() {
-        Controller.createNewPageListener.invoke(null)
-        Controller.deleteCurrentPageListener.invoke(null)
+        PageController.createNewPageListener.invoke(null)
+        PageController.deleteCurrentPageListener.invoke(null)
         verify(exactly = 1) { ButtonController.removeButton(any()) }
     }
 
@@ -48,24 +57,27 @@ class ControllerTest {
             pageFragmentList.add(firstArg())
         }
 
-        Controller.createNewPageListener.invoke(null)
+        PageController.createNewPageListener.invoke(null)
 
-        Controller.selectPage(pageFragmentList.last())
+        @Suppress("ControlFlowWithEmptyBody")
+        while (pageFragmentList.size == 0); //Wait for PageFragment addition
+
+        PageController.selectPage(pageFragmentList.last())
         verify(exactly = 1) { pageFragmentList.last().refresh() }
     }
 
     @Test
-    fun test() {
+    fun `Only current page should be refreshed on selectPage invocation`() {
         val pageFragmentList: MutableList<PageFragment> = mutableListOf()
 
         every { ButtonController.addButton(any()) } answers {
             pageFragmentList.add(firstArg())
         }
 
-        Controller.createNewPageListener.invoke(null)
-        Controller.createNewPageListener.invoke(null)
+        PageController.createNewPageListener.invoke(null)
+        PageController.createNewPageListener.invoke(null)
 
-        Controller.selectPage(pageFragmentList.first())
+        PageController.selectPage(pageFragmentList.first())
 
         verify(exactly = 1) { pageFragmentList.first().refresh() }
         verify(exactly = 0) { pageFragmentList.last().refresh() }

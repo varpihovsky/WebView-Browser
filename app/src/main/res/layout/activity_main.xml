@@ -24,13 +24,13 @@
                 android:id="@+id/newPageButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="New Page" />
+                android:text="@string/new_page" />
 
             <Button
                 android:id="@+id/removeCurrentPageButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Remove Current Page" />
+                android:text="@string/remove_current_page" />
         </LinearLayout>
     </HorizontalScrollView>
 
@@ -40,7 +40,6 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView"
         app:layout_constraintVertical_bias="0.0" />

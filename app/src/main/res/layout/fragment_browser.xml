@@ -5,12 +5,6 @@
     android:layout_height="match_parent"
     tools:context=".view.fragment.PageFragment">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
-
     <WebView
         android:id="@+id/page"
         android:layout_width="match_parent"
