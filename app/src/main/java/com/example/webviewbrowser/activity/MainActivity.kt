@@ -138,7 +138,7 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
         actionId: Int?,
         event: KeyEvent?
     ): Boolean {
-        if (actionId == EditorInfo.IME_ACTION_DONE) {
+        if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT) {
             mainActivityPresenter.onUserAddressEntered(textView?.text.toString())
             return true
         }
