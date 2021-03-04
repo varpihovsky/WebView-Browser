@@ -1,11 +1,7 @@
 package com.example.webviewbrowser.activity
 
 import android.os.Bundle
-import android.text.Editable
-import android.view.KeyEvent
 import android.view.View
-import android.view.inputmethod.EditorInfo
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
@@ -17,10 +13,10 @@ import com.example.webviewbrowser.model.PageButton
 import com.example.webviewbrowser.page.PageFragment
 
 class MainActivity : AppCompatActivity(), MainActivityInterface {
-    private val mainActivityPresenter = MainActivityPresenter(this)
+    private lateinit var mainActivityPresenter: MainActivityPresenter
     private lateinit var binding: ActivityMainBinding
     private lateinit var fragmentManager: FragmentManager
-    private val mainActivityPresenterAdapter = MainActivityPresenterAdapter(mainActivityPresenter)
+    private lateinit var mainActivityPresenterAdapter: MainActivityPresenterAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,9 +25,12 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
         binding =
             DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        binding.addressBar.setOnEditorActionListener(this::onAddressBarTextEntered)
-
         fragmentManager = supportFragmentManager
+
+        mainActivityPresenter = MainActivityPresenter.newInstance(this)
+        mainActivityPresenterAdapter = MainActivityPresenterAdapter(mainActivityPresenter)
+
+        mainActivityPresenter.init()
     }
 
     override fun createPage(page: Page) {
@@ -95,17 +94,13 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
         }
     }
 
-    override fun setTextOfButton(page: Page) {
-        binding.buttonsLayout.letFoundPageButtonByPage(page) {
+    override fun setTextOfButton(from: Page, to: Page) {
+        binding.buttonsLayout.letFoundPageButtonByPage(from) {
             if (it is PageButton) {
-                it.text = page.toString()
-                it.page = page
+                it.text = to.toString()
+                it.page = to
             }
         }
-    }
-
-    override fun updateAddressBar(text: Editable) {
-        binding.addressBar.text = text
     }
 
     override fun changePage(from: Page, to: Page) {
@@ -131,17 +126,5 @@ class MainActivity : AppCompatActivity(), MainActivityInterface {
 
     fun onRemoveCurrentButtonClicked(view: View) {
         mainActivityPresenter.onRemoveCurrent()
-    }
-
-    private fun onAddressBarTextEntered(
-        textView: TextView?,
-        actionId: Int?,
-        event: KeyEvent?
-    ): Boolean {
-        if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT) {
-            mainActivityPresenter.onUserAddressEntered(textView?.text.toString())
-            return true
-        }
-        return false
     }
 }

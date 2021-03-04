@@ -1,6 +1,5 @@
 package com.example.webviewbrowser.activity
 
-import android.text.Editable
 import com.example.webviewbrowser.model.Page
 
 interface MainActivityInterface {
@@ -14,9 +13,7 @@ interface MainActivityInterface {
 
     fun loadPage(page: Page)
 
-    fun setTextOfButton(page: Page)
-
-    fun updateAddressBar(text: Editable)
+    fun setTextOfButton(from: Page, to: Page)
 
     fun changePage(from: Page, to: Page)
 

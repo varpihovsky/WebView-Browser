@@ -10,7 +10,6 @@ fun <T> FragmentManager.letLastFragmentOrDoNothing(block: (Fragment) -> T): T? =
 
 fun <T> FragmentManager.letFoundFragmentByPageOrDoNothing(page: Page, block: (Fragment) -> T): T? =
     fragments.find {
-        println(it is PageFragment)
         if (it is PageFragment) {
             it.page == page
         } else {

@@ -11,7 +11,7 @@ import java.util.regex.Pattern
 
 
 @Parcelize
-class Page(var path: String = "https://google.com/") : Parcelable {
+data class Page(var path: String = "https://www.google.com/", ) : Parcelable {
     override fun toString(): String {
         return Pattern.compile("/[^/].+/").matcher(path).run {
             if (find()) {
@@ -21,23 +21,6 @@ class Page(var path: String = "https://google.com/") : Parcelable {
             } else path
         }
     }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as Page
-
-        if (path != other.path) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return path.hashCode()
-    }
-
-
 }
 
 class PageRepository {
@@ -51,7 +34,14 @@ class PageRepository {
         pageList.remove(page)
     }
 
-    fun getLast() = pageList.lastOrNull()
+    fun replacePage(from: Page, to: Page) {
+        val index = pageList.indexOf(from)
+        pageList[index] = to
+    }
+
+    fun size() = pageList.size
+
+    fun getLast() = pageList.last()
 }
 
 @SuppressLint("ViewConstructor", "AppCompatCustomView")

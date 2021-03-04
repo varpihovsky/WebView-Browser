@@ -11,11 +11,7 @@ import kotlinx.android.parcel.RawValue
 @Parcelize
 class MainActivityPresenterAdapter(private val mainActivityPresenter: @RawValue MainActivityPresenter) :
     Parcelable {
-    fun onUpdateButton(page: Page) {
-        mainActivityPresenter.onUpdateButton(page)
-    }
-
-    fun onUpdateAddressBar(page: Page) {
-        mainActivityPresenter.onUpdateAddressBar(page)
+    fun onUpdateButton(from: Page, to: Page) {
+        mainActivityPresenter.onUpdateButton(from, to)
     }
 }

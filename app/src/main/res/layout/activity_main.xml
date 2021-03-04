@@ -36,22 +36,6 @@
             </LinearLayout>
         </HorizontalScrollView>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:id="@+id/addressBar"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:inputType="text"
-                android:maxLines="1"
-                android:minLines="1"
-                android:scrollbars="horizontal"
-                android:scrollHorizontally="true"
-                android:textSize="14sp" />
-        </com.google.android.material.textfield.TextInputLayout>
-
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/browserFragment"
             android:layout_width="match_parent"
