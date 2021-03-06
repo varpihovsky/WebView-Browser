@@ -75,7 +75,7 @@ class MainActivityPresenterTest {
         mainActivityPresenter.onCreateNew(TEST_ADDRESS2)
         mainActivityPresenter.onCreateNew(TEST_ADDRESS3)
 
-        mainActivityPresenter.onUpdateButton(
+        mainActivityPresenter.onPageChanged(
             Page(TEST_ADDRESS3),
             Page(TEST_ADDRESS)
         )

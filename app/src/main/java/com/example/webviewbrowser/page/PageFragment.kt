@@ -72,7 +72,7 @@ class PageFragment : Fragment(), PageFragmentInterface {
     }
 
     override fun assignPage(page: Page) {
-        mainActivityPresenterInterface.onUpdateButton(this.page, page)
+        mainActivityPresenterInterface.onPageChanged(this.page, page)
         this.page = page
     }
 
@@ -92,14 +92,14 @@ class PageFragment : Fragment(), PageFragmentInterface {
         override fun onPageFinished(view: WebView?, url: String?) {
             url?.let {
                 binding.url = page.path
-                mainActivityPresenterInterface.onUpdateButton(page, Page(it))
+                mainActivityPresenterInterface.onPageChanged(page, Page(it))
                 page = Page(it)
             }
         }
     }
 
     interface MainActivityPresenterInterface {
-        fun onUpdateButton(from: Page, to: Page)
+        fun onPageChanged(from: Page, to: Page)
     }
 
     companion object {

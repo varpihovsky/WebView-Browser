@@ -11,7 +11,7 @@ import java.util.regex.Pattern
 
 
 @Parcelize
-data class Page(var path: String = "https://www.google.com/", ) : Parcelable {
+data class Page(var path: String = DEFAULT_URL) : Parcelable {
     override fun toString(): String {
         return Pattern.compile("/[^/].+/").matcher(path).run {
             if (find()) {
@@ -21,16 +21,20 @@ data class Page(var path: String = "https://www.google.com/", ) : Parcelable {
             } else path
         }
     }
+
+    companion object {
+        const val DEFAULT_URL = "https://www.google.com/"
+    }
 }
 
 class PageRepository {
     private val pageList = mutableListOf<Page>()
 
-    fun addPage(page: Page) {
+    fun addPageToList(page: Page) {
         pageList.add(page)
     }
 
-    fun removePage(page: Page) {
+    fun removePageFromList(page: Page) {
         pageList.remove(page)
     }
 

@@ -23,17 +23,17 @@ class MainActivityPresenter private constructor(private var mainActivityInterfac
     }
 
     fun init() {
-        pageRepository.addPage(currentPage)
+        pageRepository.addPageToList(currentPage)
 
         mainActivityInterface?.createPage(currentPage)
         mainActivityInterface?.loadPage(currentPage)
     }
 
-    fun onCreateNew(text: String = "https://www.google.com/") {
+    fun onCreateNew(text: String = Page.DEFAULT_URL) {
         Page(text).let {
             mainActivityInterface?.hidePage(currentPage)
 
-            pageRepository.addPage(it)
+            pageRepository.addPageToList(it)
 
             mainActivityInterface?.createPage(it)
 
@@ -65,7 +65,7 @@ class MainActivityPresenter private constructor(private var mainActivityInterfac
     }
 
     private fun removeCurrentWhenRepositorySizeIsNotMin() {
-        pageRepository.removePage(currentPage)
+        pageRepository.removePageFromList(currentPage)
 
         mainActivityInterface?.removePage(currentPage)
 
@@ -75,7 +75,7 @@ class MainActivityPresenter private constructor(private var mainActivityInterfac
         }
     }
 
-    override fun onUpdateButton(from: Page, to: Page) {
+    override fun onPageChanged(from: Page, to: Page) {
         pageRepository.replacePage(from, to)
 
         mainActivityInterface?.setTextOfButton(from, to)
