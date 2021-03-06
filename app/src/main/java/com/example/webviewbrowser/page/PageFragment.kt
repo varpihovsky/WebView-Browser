@@ -81,7 +81,7 @@ class PageFragment : Fragment(), PageFragmentInterface {
         actionId: Int?,
         event: KeyEvent?
     ): Boolean {
-        if (event?.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER) {
+        if ((event?.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER) || actionId == ACTION_SEARCH) {
             pagePresenter.onUrlEntered(textView?.text.toString())
             return true
         }
@@ -104,6 +104,7 @@ class PageFragment : Fragment(), PageFragmentInterface {
 
     companion object {
         const val PATH_PARAM = "page"
+        private const val ACTION_SEARCH = 5
 
         fun newInstance(page: Page) =
             PageFragment().apply {
