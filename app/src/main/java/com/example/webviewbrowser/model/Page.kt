@@ -35,6 +35,9 @@ class PageRepository {
     }
 
     fun replacePage(from: Page, to: Page) {
+        if (from == to) {
+            return
+        }
         val index = pageList.indexOf(from)
         pageList[index] = to
     }
@@ -42,11 +45,16 @@ class PageRepository {
     fun size() = pageList.size
 
     fun getLast() = pageList.last()
+
+    fun list() = ArrayList(pageList)
 }
 
 @SuppressLint("ViewConstructor", "AppCompatCustomView")
-class PageButton(context: Context, var page: Page, mainActivityPresenter: MainActivityPresenter) :
-    Button(context) {
+class PageButton(
+    c: Context,
+    var page: Page,
+    var mainActivityPresenter: MainActivityPresenter
+) : Button(c) {
     val listener: (View) -> Unit = {
         mainActivityPresenter.selectPage(page)
     }

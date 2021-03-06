@@ -1,73 +1,113 @@
 package com.example.webviewbrowser.activity
 
+import android.os.Parcelable
 import com.example.webviewbrowser.model.Page
 import com.example.webviewbrowser.model.PageRepository
+import com.example.webviewbrowser.page.PageFragment
+import kotlinx.android.parcel.Parcelize
+import kotlinx.android.parcel.RawValue
 
-class MainActivityPresenter private constructor(private var mainActivityInterface: MainActivityInterface) {
+@Parcelize
+class MainActivityPresenter private constructor(private var mainActivityInterface: @RawValue MainActivityInterface?) :
+    Parcelable, PageFragment.MainActivityPresenterInterface {
     private val pageRepository = PageRepository()
+
     private var currentPage: Page = Page()
+
+    fun bind(mainActivityInterface: MainActivityInterface) {
+        this.mainActivityInterface = mainActivityInterface
+    }
+
+    fun unBind() {
+        this.mainActivityInterface = null
+    }
 
     fun init() {
         pageRepository.addPage(currentPage)
 
-        mainActivityInterface.createPage(currentPage)
-        mainActivityInterface.loadPage(currentPage)
+        mainActivityInterface?.createPage(currentPage)
+        mainActivityInterface?.loadPage(currentPage)
     }
 
     fun onCreateNew(text: String = "https://www.google.com/") {
         Page(text).let {
-            mainActivityInterface.hidePage(currentPage)
+            mainActivityInterface?.hidePage(currentPage)
 
             pageRepository.addPage(it)
 
-            mainActivityInterface.createPage(it)
+            mainActivityInterface?.createPage(it)
 
             currentPage = it
 
-            mainActivityInterface.showPage(it)
-            mainActivityInterface.loadPage(it)
+            mainActivityInterface?.showPage(it)
+            mainActivityInterface?.loadPage(it)
         }
     }
 
     fun onRemoveCurrent() {
-        if (pageRepository.size() != 1) {
-            pageRepository.removePage(currentPage)
-
-            mainActivityInterface.removePage(currentPage)
-
-            currentPage = pageRepository.getLast()
-
-            mainActivityInterface.showPage(currentPage)
+        if (pageRepository.size() == MIN_REPOSITORY_PAGES_COUNT) {
+            removeCurrentWhenRepositorySizeIsMin()
         } else {
-            Page().let {
-                pageRepository.replacePage(currentPage, it)
-
-                mainActivityInterface.changePage(currentPage, it)
-                mainActivityInterface.loadPage(it)
-
-                currentPage = it
-            }
+            removeCurrentWhenRepositorySizeIsNotMin()
         }
     }
 
-    fun onUpdateButton(from: Page, to: Page) {
+    private fun removeCurrentWhenRepositorySizeIsMin() {
+        Page().let {
+            pageRepository.replacePage(currentPage, it)
+
+            mainActivityInterface?.changePage(currentPage, it)
+            mainActivityInterface?.showPage(it)
+            mainActivityInterface?.loadPage(it)
+
+            currentPage = it
+        }
+    }
+
+    private fun removeCurrentWhenRepositorySizeIsNotMin() {
+        pageRepository.removePage(currentPage)
+
+        mainActivityInterface?.removePage(currentPage)
+
+        pageRepository.getLast().let {
+            mainActivityInterface?.showPage(currentPage)
+            currentPage = it
+        }
+    }
+
+    override fun onUpdateButton(from: Page, to: Page) {
         pageRepository.replacePage(from, to)
 
-        mainActivityInterface.setTextOfButton(from, to)
+        mainActivityInterface?.setTextOfButton(from, to)
+
+        if (from == currentPage) {
+            currentPage = to
+        }
     }
 
     fun selectPage(page: Page) {
         if (page == currentPage) {
-            mainActivityInterface.refreshPage(page)
+            mainActivityInterface?.refreshPage(page)
         } else {
-            mainActivityInterface.hidePage(currentPage)
-            mainActivityInterface.showPage(page)
+            mainActivityInterface?.hidePage(currentPage)
+            mainActivityInterface?.showPage(page)
 
             currentPage = page
         }
     }
 
+    fun onRestore() {
+        mainActivityInterface?.showPage(currentPage)
+        pageRepository.list().forEach {
+            if (it != currentPage)
+                mainActivityInterface?.hidePage(it)
+        }
+        mainActivityInterface?.loadPage(currentPage)
+    }
+
     companion object {
+        private const val MIN_REPOSITORY_PAGES_COUNT = 1
+
         fun newInstance(mainActivityInterface: MainActivityInterface) =
             MainActivityPresenter(mainActivityInterface)
     }
