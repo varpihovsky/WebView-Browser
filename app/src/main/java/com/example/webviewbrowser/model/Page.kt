@@ -11,7 +11,7 @@ import java.util.regex.Pattern
 
 
 @Parcelize
-data class Page(var path: String = DEFAULT_URL) : Parcelable {
+data class Page(var path: String = DEFAULT_URL, val id: Int) : Parcelable {
     override fun toString(): String {
         return Pattern.compile("/[^/].+/").matcher(path).run {
             if (find()) {

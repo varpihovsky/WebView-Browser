@@ -8,11 +8,12 @@ import kotlinx.android.parcel.Parcelize
 import kotlinx.android.parcel.RawValue
 
 @Parcelize
-class MainActivityPresenter private constructor(private var mainActivityInterface: @RawValue MainActivityInterface?) :
+class MainActivityPresenter
+private constructor(private var mainActivityInterface: @RawValue MainActivityInterface?) :
     Parcelable, PageFragment.MainActivityPresenterInterface {
     private val pageRepository = PageRepository()
 
-    private var currentPage: Page = Page()
+    private var currentPage: Page = Page(id = 0)
 
     fun bind(mainActivityInterface: MainActivityInterface) {
         this.mainActivityInterface = mainActivityInterface
@@ -30,7 +31,7 @@ class MainActivityPresenter private constructor(private var mainActivityInterfac
     }
 
     fun onCreateNew(text: String = Page.DEFAULT_URL) {
-        Page(text).let {
+        Page(text, pageRepository.size() + 1).let {
             mainActivityInterface?.hidePage(currentPage)
 
             pageRepository.addPageToList(it)
@@ -53,7 +54,7 @@ class MainActivityPresenter private constructor(private var mainActivityInterfac
     }
 
     private fun removeCurrentWhenRepositorySizeIsMin() {
-        Page().let {
+        Page(id = 0).let {
             pageRepository.replacePage(currentPage, it)
 
             mainActivityInterface?.changePage(currentPage, it)

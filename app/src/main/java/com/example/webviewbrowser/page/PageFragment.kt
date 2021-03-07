@@ -82,7 +82,7 @@ class PageFragment : Fragment(), PageFragmentInterface {
         event: KeyEvent?
     ): Boolean {
         if ((event?.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER) || actionId == ACTION_SEARCH) {
-            pagePresenter.onUrlEntered(textView?.text.toString())
+            pagePresenter.onUrlEntered(textView?.text.toString(), page)
             return true
         }
         return false
@@ -92,14 +92,15 @@ class PageFragment : Fragment(), PageFragmentInterface {
         override fun onPageFinished(view: WebView?, url: String?) {
             url?.let {
                 binding.url = page.path
-                mainActivityPresenterInterface.onPageChanged(page, Page(it))
-                page = Page(it)
+                mainActivityPresenterInterface.onPageChanged(page, Page(it, page.id))
+                page = Page(it, page.id)
             }
         }
     }
 
     interface MainActivityPresenterInterface {
         fun onPageChanged(from: Page, to: Page)
+
     }
 
     companion object {
